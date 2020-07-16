@@ -1,0 +1,145 @@
+---
+title: "descstats"
+output: html_document
+---
+
+```{r}
+library(ggplot2)
+library(knitr)
+library(summarytools)
+```
+
+
+```{r}
+df_cardio <- read.csv("cardio_train.csv", sep = ";", header = TRUE)
+```
+
+```{r}
+df_cardio["age"] <- round(df_cardio["age"]/365,0)
+df_cardio["height"][df_cardio["height"] < 140] <- NA
+df_cardio["weight"][df_cardio["weight"] < 30] <- NA
+df_cardio["ap_hi"][df_cardio["ap_hi"] > 240 | df_cardio["ap_hi"] < 80] <- NA
+df_cardio["ap_lo"][df_cardio["ap_lo"] > 190 | df_cardio["ap_lo"] < 50] <- NA
+```
+
+```{r}
+kable(head(df_cardio))
+```
+
+```{r}
+# crate specific variable
+age <- df_cardio[,c("age")]
+gender <- df_cardio[,c("gender")]
+height <- df_cardio[,c("height")]
+weight <- df_cardio[,c("weight")]
+ap_hi <- df_cardio[,c("ap_hi")]
+ap_lo <- df_cardio[,c("ap_lo")]
+chole <- df_cardio[,c("cholesterol")]
+gluc <- df_cardio[,c("gluc")]
+smoke <- df_cardio[,c("smoke")]
+alco <- df_cardio[,c("alco")]
+active <- df_cardio[,c("active")]
+cardio <- df_cardio[,c("cardio")]
+```
+
+```{r}
+# Providing the labels for different values based on the dictionary
+chole_labels <- c("Normal", "Above normal", "Well above normal" )
+
+# Creating frequency table of values
+chole_frequency <- table(chole)
+
+# Creating the table of varaible and labels
+chole_data_frame <- as.data.frame(chole_frequency);
+chole_data_frame$Chole_Status <- chole_labels
+
+# Showing the table and information
+kable(chole_data_frame, caption = "Cholesterol status")
+```
+
+```{r}
+# Providing the labels for different values based on the dictionary
+gluc_labels <- c("Normal", "Above normal", "Well above normal" )
+
+# Creating frequency table of values
+gluc_frequency <- table(gluc)
+
+# Creating the table of varaible and labels
+gluc_data_frame <- as.data.frame(gluc_frequency);
+gluc_data_frame$Gluc_Status <- gluc_labels
+
+# Showing the table and information
+kable(gluc_data_frame, caption = "Glucose status")
+```
+
+```{r}
+# Providing the labels for different values based on the dictionary
+smoke_labels <- c("Non-smoker", "Smoker")
+
+# Creating frequency table of values
+smoke_frequency <- table(smoke)
+
+# Creating the table of varaible and labels
+smoke_data_frame <- as.data.frame(smoke_frequency);
+smoke_data_frame$Smoke_Status <- smoke_labels
+
+# Showing the table and information
+kable(smoke_data_frame, caption = "Smoke status")
+```
+
+```{r}
+# Providing the labels for different values based on the dictionary
+alco_labels <- c("Non-drinker", "Drinker")
+
+# Creating frequency table of values
+alco_frequency <- table(alco)
+
+# Creating the table of varaible and labels
+alco_data_frame <- as.data.frame(alco_frequency);
+alco_data_frame$Alco_Status <- alco_labels
+
+# Showing the table and information
+kable(alco_data_frame, caption = "Alcohol status")
+```
+
+```{r}
+# Providing the labels for different values based on the dictionary
+active_labels <- c("No Physical Activity", "With Physical Activity")
+
+# Creating frequency table of values
+active_frequency <- table(active)
+
+# Creating the table of varaible and labels
+active_data_frame <- as.data.frame(active_frequency);
+active_data_frame$active_Status <- active_labels
+
+# Showing the table and information
+kable(active_data_frame, caption = "Activity status")
+```
+
+
+```{r}
+age_descr <- descr(age, stats = "common", transpose = TRUE)
+gender_descr <- descr(gender, stats = "common", transpose = TRUE)
+height_descr <- descr(height, stats = "common", transpose = TRUE)
+weight_descr <- descr(weight, stats = "common", transpose = TRUE)
+ap_hi_descr <- descr(ap_hi, stats = "common", transpose = TRUE)
+ap_lo_descr <- descr(ap_lo, stats = "common", transpose = TRUE)
+chole_descr <- descr(chole, stats = "common", transpose = TRUE)
+gluc_descr <- descr(gluc, stats = "common", transpose = TRUE)
+smoke_descr <- descr(smoke, stats = "common", transpose = TRUE)
+alco_descr <- descr(alco, stats = "common", transpose = TRUE)
+active_descr <- descr(active, stats = "common", transpose = TRUE)
+cardio_descr <- descr(cardio, stats = "common", transpose = TRUE)
+```
+
+```{r}
+row_names <- c(c("Age", "Gender", "Height", "Weight","Ap_hi", "Ap_lo", "Chole", "Gluc", "Smoke","Alco","Active","Cardio"))
+
+descr_stats_dataframe <- data.frame(rbind(age_descr, gender_descr, height_descr, weight_descr, ap_hi_descr, ap_lo_descr, chole_descr, gluc_descr, smoke_descr, alco_descr, active_descr, cardio_descr), row.names = row_names)
+
+kable(descr_stats_dataframe, caption = "Descriptive Statistics")
+```
+
+
+
